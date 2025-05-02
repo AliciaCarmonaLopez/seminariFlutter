@@ -75,4 +75,33 @@ class UserService {
       throw Exception('Error eliminant usuari: ${response.statusCode}');
     }
   }
+
+  static Future<User?> modificaUser(User user) async {
+   print('Enviant dades al backend per modificar usuari: ${user.toJson()}');
+   try {
+     final body = {
+       "_id": user.id,
+       "name": user.name,
+       "age": user.age,
+       "email": user.email,
+       "password": user.password,
+     };
+ 
+     final response = await http.put(
+       Uri.parse('http://localhost:9000/api/users/${user.id}'),
+       headers: {'Content-Type': 'application/json'},
+       body: jsonEncode(body),
+     );
+ 
+     if (response.statusCode == 200) {
+       final data = jsonDecode(response.body);
+       return User.fromJson(data);
+     } else {
+       print(response.body);
+       return null;
+     }
+   } catch (e) {
+     throw Exception('Error al modificar usuari: $e');
+   }
+ }
 }

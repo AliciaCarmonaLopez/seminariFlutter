@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/Layout.dart';
 import '../services/auth_service.dart';
+import 'package:seminari_flutter/provider/users_provider.dart';
+import 'package:provider/provider.dart';
 
 class PerfilScreen extends StatelessWidget {
   const PerfilScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context, listen: true);
+    final currentUser = userProvider.user;
+
     return LayoutWrapper(
       title: 'Perfil',
       child: SingleChildScrollView(
@@ -26,14 +31,14 @@ class PerfilScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'Exemple',
+                    currentUser.name,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'demo@exemple.com',
+                    currentUser.email,
                     style: Theme.of(
                       context,
                     ).textTheme.titleMedium?.copyWith(color: Colors.grey),
@@ -52,10 +57,10 @@ class PerfilScreen extends StatelessWidget {
                             context,
                             Icons.badge,
                             'ID',
-                            '67f8f3103368468b6e9d509c',
+                            currentUser.id.toString(),
                           ),
                           const Divider(),
-                          _buildProfileItem(context, Icons.cake, 'Edat', '22'),
+                          _buildProfileItem(context, Icons.cake, 'Edat', currentUser.age.toString()),
                         ],
                       ),
                     ),

@@ -6,10 +6,12 @@ class UserProvider with ChangeNotifier {
   List<User> _users = [];
   bool _isLoading = false;
   String? _error;
+  User _user = User(name: '', age: 0, email: '', password: '');
 
   List<User> get users => _users;
   bool get isLoading => _isLoading;
   String? get error => _error;
+  User get user => _user;
 
   void _setLoading(bool loading) {
     _isLoading = loading;
@@ -20,6 +22,12 @@ class UserProvider with ChangeNotifier {
     _error = errorMessage;
     notifyListeners();
   }
+
+  void setCurrentUser(User user) {
+     _user = user;
+     print('Usuario actualizado: ${_user.toJson()}');
+     notifyListeners();
+   }
 
   Future<void> loadUsers() async {
     _setLoading(true);
@@ -71,6 +79,7 @@ class UserProvider with ChangeNotifier {
       return false;
     }
   }
+  
   Future<bool> eliminarUsuari(String name) async {
     _setLoading(true);
     _setError(null);
@@ -103,4 +112,49 @@ class UserProvider with ChangeNotifier {
       return false;
     }
   }
+
+
+
+  Future<bool> modificarUsuari(
+  String? id,
+  String nom,
+  int edat,
+  String email,
+  ) async {
+   if (id == null || id.isEmpty) {
+     _setError('Error: El ID del usuario es nulo o vacío');
+     return false;
+   }
+ 
+   _setLoading(true);
+   _setError(null);
+ 
+   final password = _user.password ?? '';
+ 
+   final nouUsuari = User(
+     id: id,
+     name: nom,
+     age: edat,
+     email: email,
+     password: password,
+   );
+ 
+   try {
+     final modifiedUser = await UserService.modificaUser(nouUsuari);
+     if (modifiedUser != null) {
+       setCurrentUser(modifiedUser);
+       _setLoading(false);
+       notifyListeners();
+       return true;
+     } else {
+       _setError('Respuesta nula');
+       _setLoading(false);
+       return false;
+     }
+   } catch (e) {
+     _setError('Error modificando el usuario: $e');
+     _setLoading(false);
+     return false;
+   }
+ }
 }
