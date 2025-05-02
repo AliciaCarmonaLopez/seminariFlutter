@@ -116,23 +116,25 @@ class UserProvider with ChangeNotifier {
 
 
 
-  Future<bool> modificarUsuari(String? id, String nom, int edat, String email,) async {
+  Future<bool> modificarUsuari(String? id, String nom, int edat, String email,String? password) async {
    if (id == null || id.isEmpty) {
      _setError('Error: El ID del usuario es nulo o vacío');
      return false;
    }
- 
+
    _setLoading(true);
    _setError(null);
- 
-   final password = _user.password ?? '';
- 
+
+  // Si "password" es nulo o vacío, usa el valor de "_user.password"
+  final pass = (password == null || password.isEmpty) ? _user.password ?? '' : password;
+
+  log(pass);
    final nouUsuari = User(
      id: id,
      name: nom,
      age: edat,
      email: email,
-     password: password,
+     password: pass,
    );
  
    try {

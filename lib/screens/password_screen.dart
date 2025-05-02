@@ -5,26 +5,22 @@ import 'package:seminari_flutter/provider/users_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:seminari_flutter/widgets/Layout.dart';
 
-class EditarScreen extends StatefulWidget {
-  const EditarScreen({super.key});
+class PasswordScreen extends StatefulWidget {
+  const PasswordScreen({super.key});
 
   @override
-  State<EditarScreen> createState() => _EditarScreenState();
+  State<PasswordScreen> createState() => _PasswordScreenState();
 }
 
-class _EditarScreenState extends State<EditarScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final nomController = TextEditingController();
-  final edatController = TextEditingController();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+class _PasswordScreenState extends State<PasswordScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();    
+  final pass1Controller = TextEditingController();
+  final pass2Controller = TextEditingController();
 
   @override
   void dispose() {
-    nomController.dispose();
-    edatController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
+    pass1Controller.dispose();
+    pass2Controller.dispose();
     super.dispose();
   }
 
@@ -33,7 +29,7 @@ class _EditarScreenState extends State<EditarScreen> {
     final provider = Provider.of<UserProvider>(context, listen: true);
 
     return LayoutWrapper(
-      title: 'Edit User',
+      title: 'Change Password',
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -54,12 +50,12 @@ class _EditarScreenState extends State<EditarScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Editar usuari',
+                            'Canvia la contrasenya',
                             style: Theme.of(context).textTheme.headlineSmall,
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Omple el formulari a continuació per modificar dades a l\'usuari.',
+                            'Omple el formulari a continuació per modificar la contrasenya.',
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ],
@@ -80,8 +76,8 @@ class _EditarScreenState extends State<EditarScreen> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             _buildFormField(
-                              controller: nomController,
-                              label: 'Nom',
+                              controller: pass1Controller,
+                              label: 'New Password',
                               icon: Icons.person,
                               validator: (value) => value == null || value.isEmpty 
                                   ? 'Cal omplir el nom' 
@@ -89,8 +85,8 @@ class _EditarScreenState extends State<EditarScreen> {
                             ),
                             const SizedBox(height: 16),
                             _buildFormField(
-                              controller: edatController,
-                              label: 'Edat',
+                              controller: pass2Controller,
+                              label: 'Repeat Password',
                               icon: Icons.cake,
                               keyboardType: TextInputType.number,
                               validator: (value) {
@@ -104,37 +100,31 @@ class _EditarScreenState extends State<EditarScreen> {
                                 return null;
                               },
                             ),
-                            const SizedBox(height: 16),
-                            _buildFormField(
-                              controller: emailController,
-                              label: 'Correu electrònic',
-                              icon: Icons.email,
-                              keyboardType: TextInputType.emailAddress,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'El correu electrònic no pot estar buit';
-                                }
-                                if (!value.contains('@')) {
-                                  return 'Si us plau insereix una adreça vàlida';
-                                }
-                                return null;
-                              },
-                            ),
                             const SizedBox(height: 32),
                             ElevatedButton.icon(
                               onPressed: () async{
                                 if (_formKey.currentState!.validate()) {
+                                  if (pass1Controller.text != pass2Controller.text) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: const Text('Les contrasenyes no coincideixen!'),
+                                        backgroundColor: Colors.red,
+                                        behavior: SnackBarBehavior.floating,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
                                   User user = provider.user;
-                                  await provider.modificarUsuari(
+                                  provider.modificarUsuari(
                                     user.id,
-                                    nomController.text,
-                                    int.tryParse(edatController.text) ?? 0,
-                                    emailController.text,  
-                                    user.password,                              
+                                    user.name,                                    
+                                    user.age,                                    
+                                    user.email,
+                                    pass1Controller.text,                                                    
                                   );
-                                  nomController.text = user.name;
-                                   edatController.text = user.age.toString();
-                                   emailController.text = user.email;  
                                   context.go('/profile'); // Redirigeix a la pantalla de perfil                                              
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
@@ -150,7 +140,7 @@ class _EditarScreenState extends State<EditarScreen> {
                               },
                               icon: const Icon(Icons.save),
                               label: const Text(
-                                'EDITAR USUARI',
+                                'MODIFICAR',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),

@@ -5,6 +5,7 @@ import 'package:seminari_flutter/screens/details_screen.dart';
 import 'package:seminari_flutter/screens/editar_screen.dart';
 import 'package:seminari_flutter/screens/imprimir_screen.dart';
 import 'package:seminari_flutter/screens/home_screen.dart';
+import 'package:seminari_flutter/screens/password_screen.dart';
 import 'package:seminari_flutter/screens/perfil_screen.dart';
 import 'package:seminari_flutter/services/auth_service.dart';
 
@@ -30,6 +31,10 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: 'editar',
           builder: (context, state) => const EditarScreen(),
+        ),
+        GoRoute(
+          path: 'password',
+          builder: (context, state) => const PasswordScreen(),
         ),
         GoRoute(
           path: 'borrar',

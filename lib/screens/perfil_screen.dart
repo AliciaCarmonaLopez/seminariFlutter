@@ -96,6 +96,7 @@ class PerfilScreen extends StatelessWidget {
                             Icons.lock,
                             'Canviar contrasenya',
                             'Actualitzar la contrasenya',
+                             onTap: () => context.go('/password'),
                           ),
                         ],
                       ),
