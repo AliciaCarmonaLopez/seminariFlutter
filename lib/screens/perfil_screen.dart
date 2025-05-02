@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/Layout.dart';
@@ -12,6 +14,7 @@ class PerfilScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context, listen: true);
     final currentUser = userProvider.user;
+    log('Current user: ${currentUser.toJson()}');
 
     return LayoutWrapper(
       title: 'Perfil',
@@ -86,6 +89,7 @@ class PerfilScreen extends StatelessWidget {
                             Icons.edit,
                             'Editar Perfil',
                             'Actualitza la teva informació personal',
+                            onTap: () => context.go('/editar'),
                           ),
                           _buildSettingItem(
                             context,
@@ -172,14 +176,16 @@ class PerfilScreen extends StatelessWidget {
     BuildContext context,
     IconData icon,
     String title,
-    String subtitle,
+    String subtitle,{
+     VoidCallback? onTap,  
+    }
   ) {
     return ListTile(
       leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
       title: Text(title),
       subtitle: Text(subtitle),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-      onTap: () {},
+      onTap: onTap,
     );
   }
 }

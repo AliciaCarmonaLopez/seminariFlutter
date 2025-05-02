@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart';
+import 'dart:developer';
 import '../services/UserService.dart';
 
 class UserProvider with ChangeNotifier {
@@ -115,12 +116,7 @@ class UserProvider with ChangeNotifier {
 
 
 
-  Future<bool> modificarUsuari(
-  String? id,
-  String nom,
-  int edat,
-  String email,
-  ) async {
+  Future<bool> modificarUsuari(String? id, String nom, int edat, String email,) async {
    if (id == null || id.isEmpty) {
      _setError('Error: El ID del usuario es nulo o vacío');
      return false;
@@ -142,10 +138,14 @@ class UserProvider with ChangeNotifier {
    try {
      final modifiedUser = await UserService.modificaUser(nouUsuari);
      if (modifiedUser != null) {
-       setCurrentUser(modifiedUser);
+        if(modifiedUser.id != null){
+        
+       _user=modifiedUser;
+       log('Modified User: ${_user.toJson()}');
        _setLoading(false);
        notifyListeners();
-       return true;
+       return true; 
+        }
      } else {
        _setError('Respuesta nula');
        _setLoading(false);
@@ -153,8 +153,9 @@ class UserProvider with ChangeNotifier {
      }
    } catch (e) {
      _setError('Error modificando el usuario: $e');
-     _setLoading(false);
+     (false);
      return false;
    }
+   return false; // Ensure a return value in all cases
  }
 }

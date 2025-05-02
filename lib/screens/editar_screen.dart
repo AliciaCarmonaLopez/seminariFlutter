@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-//import 'package:go_router/go_router.dart';
+import 'package:go_router/go_router.dart';
+import 'package:seminari_flutter/models/user.dart';
 import 'package:seminari_flutter/provider/users_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:seminari_flutter/widgets/Layout.dart';
@@ -32,7 +33,7 @@ class _EditarScreenState extends State<EditarScreen> {
     final provider = Provider.of<UserProvider>(context, listen: true);
 
     return LayoutWrapper(
-      title: 'Create User',
+      title: 'Edit User',
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -53,12 +54,12 @@ class _EditarScreenState extends State<EditarScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Crear nou usuari',
+                            'Editar usuari',
                             style: Theme.of(context).textTheme.headlineSmall,
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Omple el formulari a continuació per afegir un nou usuari al sistema.',
+                            'Omple el formulari a continuació per modificar dades a l\'usuari.',
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ],
@@ -119,41 +120,24 @@ class _EditarScreenState extends State<EditarScreen> {
                                 return null;
                               },
                             ),
-                            const SizedBox(height: 16),
-                            _buildFormField(
-                              controller: passwordController,
-                              label: 'Contrasenya',
-                              icon: Icons.lock,
-                              obscureText: true,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'La contrasenya no pot estar buida';
-                                }
-                                if (value.length < 6) {
-                                  return 'La contrasenya ha de tenir almenys 6 caràcters';
-                                }
-                                return null;
-                              },
-                            ),
                             const SizedBox(height: 32),
                             ElevatedButton.icon(
-                              onPressed: () {
+                              onPressed: () async{
                                 if (_formKey.currentState!.validate()) {
-                                  provider.crearUsuari(
+                                  User user = provider.user;
+                                  await provider.modificarUsuari(
+                                    user.id,
                                     nomController.text,
                                     int.tryParse(edatController.text) ?? 0,
-                                    emailController.text,
-                                    passwordController.text,
+                                    emailController.text,                                
                                   );
-
-                                  nomController.clear();
-                                  edatController.clear();
-                                  emailController.clear();
-                                  passwordController.clear();
-
+                                  nomController.text = user.name;
+                                   edatController.text = user.age.toString();
+                                   emailController.text = user.email;  
+                                  context.go('/profile'); // Redirigeix a la pantalla de perfil                                              
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: const Text('Usuari creat correctament!'),
+                                      content: const Text('Usuari modificat correctament!'),
                                       backgroundColor: Colors.green,
                                       behavior: SnackBarBehavior.floating,
                                       shape: RoundedRectangleBorder(
@@ -165,7 +149,7 @@ class _EditarScreenState extends State<EditarScreen> {
                               },
                               icon: const Icon(Icons.save),
                               label: const Text(
-                                'CREAR USUARI',
+                                'EDITAR USUARI',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
